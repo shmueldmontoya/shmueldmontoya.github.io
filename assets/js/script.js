@@ -1,5 +1,5 @@
 // Datos de proyectos
-const projects = [
+window.projects = [
     {
         id: 1,
         title: "Random Generator",

@@ -87,8 +87,15 @@ class CodeTypingEffect {
     }
 
     async typeCode() {
-        // Código HTML con colores
-        const codeToType = '&lt;h1&gt;Hola, soy &lt;span class="highlight"&gt;Samuel Delgado&lt;/span&gt;&lt;/h1&gt;';
+        // Obtener el idioma actual y las traducciones correspondientes
+        const currentLang = localStorage.getItem('portfolioLanguage') || 'es';
+        const translations = TRANSLATIONS[currentLang];
+        
+        // Crear el código HTML con las traducciones
+        const greeting = translations.hero.greeting;
+        const name = translations.hero.name;
+        const codeToType = `&lt;h1&gt;${greeting} &lt;span class="highlight"&gt;${name}&lt;/span&gt;&lt;/h1&gt;`;
+        
         let currentCode = '';
         let coloredCode = ''; // Mover declaración fuera del bucle
         
@@ -122,10 +129,31 @@ class CodeTypingEffect {
                 .replace(/href=/g, '<span style="color: #3b82f6;">href=</span>');
             
             this.heroTitle.innerHTML = coloredCode + '<span class="typing-cursor">|</span>';
+            this.playTypingSound();
             await this.delay(this.typingSpeed);
         }
         
         this.heroTitle.innerHTML = coloredCode; // Quitar cursor al final
+    }
+
+    playTypingSound() {
+        // Sonido opcional, muy sutil
+        // Puedes comentar esto si no lo quieres
+        /*
+        try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0.07, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.07);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.07);
+        } catch (e) {}
+        */
     }
 
     async fadeOutCode() {
@@ -142,7 +170,15 @@ class CodeTypingEffect {
         this.heroTitle.style.textAlign = '';
         this.heroTitle.style.lineHeight = '';
         this.heroTitle.style.transform = 'none'; // Asegurar que no hay transformaciones
-        this.heroTitle.innerHTML = this.originalTitle;
+        
+        // Obtener el idioma actual y las traducciones correspondientes
+        const currentLang = localStorage.getItem('portfolioLanguage') || 'es';
+        const translations = TRANSLATIONS[currentLang];
+        
+        // Crear el título final con las traducciones
+        const finalTitle = `${translations.hero.greeting} <span class="highlight">${translations.hero.name}</span>`;
+        this.heroTitle.innerHTML = finalTitle;
+        
         this.heroTitle.style.opacity = '1';
         await this.delay(300);
     }
@@ -195,40 +231,7 @@ function addTypingCursorStyles() {
 document.addEventListener('DOMContentLoaded', () => {
     addTypingCursorStyles();
     
-    if (!sessionStorage.getItem('typingEffectShown')) {
-        const typingEffect = new CodeTypingEffect();
-        typingEffect.startEffect();
-        sessionStorage.setItem('typingEffectShown', 'true');
-    } else {
-        // Si ya se mostró, mostrar todo directamente
-        const heroTitle = document.querySelector('.hero-title');
-        const heroSubtitle = document.querySelector('.hero-subtitle');
-        const heroButtons = document.querySelector('.hero-buttons');
-        const heroImage = document.querySelector('.hero-image');
-        
-        heroTitle.style.opacity = '1';
-        heroTitle.style.transform = 'none';
-        heroSubtitle.style.opacity = '1';
-        heroSubtitle.style.transform = 'translateY(0)';
-        heroButtons.style.opacity = '1';
-        heroButtons.style.transform = 'translateY(0)';
-        heroImage.style.opacity = '1';
-        heroImage.style.transform = 'translateX(0)';
-        
-        // Mostrar el resto de la página también
-        const sections = document.querySelectorAll('section:not(#inicio)');
-        sections.forEach(section => {
-            section.style.opacity = '1';
-            section.style.visibility = 'visible';
-        });
-        
-        const footer = document.querySelector('.footer');
-        if (footer) {
-            footer.style.opacity = '1';
-            footer.style.visibility = 'visible';
-        }
-        
-        // Asegurar que el scroll esté habilitado
-        document.body.style.overflow = 'auto';
-    }
+    // Siempre mostrar el efecto de escritura al cargar la página
+    const typingEffect = new CodeTypingEffect();
+    typingEffect.startEffect();
 }); 
