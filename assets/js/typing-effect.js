@@ -129,31 +129,10 @@ class CodeTypingEffect {
                 .replace(/href=/g, '<span style="color: #3b82f6;">href=</span>');
             
             this.heroTitle.innerHTML = coloredCode + '<span class="typing-cursor">|</span>';
-            this.playTypingSound();
             await this.delay(this.typingSpeed);
         }
         
         this.heroTitle.innerHTML = coloredCode; // Quitar cursor al final
-    }
-
-    playTypingSound() {
-        // Sonido opcional, muy sutil
-        // Puedes comentar esto si no lo quieres
-        /*
-        try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-            oscillator.type = 'sine';
-            gainNode.gain.setValueAtTime(0.07, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.07);
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.07);
-        } catch (e) {}
-        */
     }
 
     async fadeOutCode() {
