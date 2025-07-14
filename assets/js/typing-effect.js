@@ -8,6 +8,7 @@ class CodeTypingEffect {
         this.heroSubtitle = document.querySelector('.hero-subtitle');
         this.heroButtons = document.querySelector('.hero-buttons');
         this.heroImage = document.querySelector('.hero-image');
+        this.navContainer = document.querySelector('.nav-container');
         this.originalTitle = this.heroTitle.innerHTML;
         this.originalSubtitle = this.heroSubtitle.innerHTML;
         this.originalButtons = this.heroButtons.innerHTML;
@@ -29,6 +30,12 @@ class CodeTypingEffect {
         this.heroButtons.style.opacity = '0';
         this.heroImage.style.opacity = '0';
         this.heroImage.style.transform = 'translateX(50px)';
+        
+        // Ocultar la navegación
+        if (this.navContainer) {
+            this.navContainer.style.opacity = '0';
+            this.navContainer.style.visibility = 'hidden';
+        }
     }
 
     hideRestOfPage() {
@@ -73,6 +80,13 @@ class CodeTypingEffect {
             footer.style.opacity = '1';
             footer.style.visibility = 'visible';
         }
+        
+        // Mostrar la navegación
+        if (this.navContainer) {
+            this.navContainer.style.transition = 'opacity 0.8s ease-in-out, visibility 0.8s ease-in-out';
+            this.navContainer.style.opacity = '1';
+            this.navContainer.style.visibility = 'visible';
+        }
     }
 
     async startEffect() {
@@ -101,7 +115,19 @@ class CodeTypingEffect {
         
         this.heroTitle.style.opacity = '1';
         this.heroTitle.style.fontFamily = 'Inter, sans-serif';
-        this.heroTitle.style.fontSize = '2rem';
+        
+        // Tamaño responsivo basado en el ancho de la pantalla
+        const screenWidth = window.innerWidth;
+        let fontSize;
+        if (screenWidth <= 480) {
+            fontSize = '1.8rem'; // Mobile
+        } else if (screenWidth <= 768) {
+            fontSize = '2.5rem'; // Tablet
+        } else {
+            fontSize = '3rem'; // Desktop
+        }
+        
+        this.heroTitle.style.fontSize = fontSize;
         this.heroTitle.style.background = 'none';
         this.heroTitle.style.padding = '0';
         this.heroTitle.style.border = 'none';
@@ -134,6 +160,7 @@ class CodeTypingEffect {
         
         this.heroTitle.innerHTML = coloredCode; // Quitar cursor al final
     }
+
 
     async fadeOutCode() {
         this.heroTitle.style.transition = 'opacity 0.4s ease-in-out';

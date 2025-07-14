@@ -202,17 +202,14 @@ function animateSkillTags() {
         entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
                 setTimeout(() => {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.classList.add('animate-in');
                 }, index * 100);
             }
         });
     }, { threshold: 0.1 });
     
     skillTags.forEach(tag => {
-        tag.style.opacity = '0';
-        tag.style.transform = 'translateY(20px)';
-        tag.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        tag.classList.add('animate-out');
         observer.observe(tag);
     });
 }
@@ -225,17 +222,14 @@ function animateOnScroll() {
         entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
                 setTimeout(() => {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.classList.add('animate-in');
                 }, index * 100);
             }
         });
     }, { threshold: 0.1 });
     
     elements.forEach(element => {
-        element.style.opacity = '0';
-        element.style.transform = 'translateY(20px)';
-        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        element.classList.add('animate-out');
         observer.observe(element);
     });
 }
