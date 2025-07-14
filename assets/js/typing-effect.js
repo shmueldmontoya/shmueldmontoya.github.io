@@ -1,22 +1,27 @@
 /**
- * Efecto de Escritura de Código: solo typewriter con colores, luego fade out, luego fade in del título real.
+ * Efecto de Escritura de Código: aplicado a todo el contenido del hero-container
  */
 
 class CodeTypingEffect {
     constructor() {
+        this.heroContainer = document.querySelector('.hero-container');
         this.heroTitle = document.querySelector('.hero-title');
         this.heroSubtitle = document.querySelector('.hero-subtitle');
         this.heroButtons = document.querySelector('.hero-buttons');
         this.heroImage = document.querySelector('.hero-image');
         this.navContainer = document.querySelector('.nav-container');
-        this.originalTitle = this.heroTitle.innerHTML;
-        this.originalSubtitle = this.heroSubtitle.innerHTML;
-        this.originalButtons = this.heroButtons.innerHTML;
+        
+        // Guardar contenido original
+        this.originalContent = {
+            title: this.heroTitle.innerHTML,
+            subtitle: this.heroSubtitle.innerHTML,
+            buttons: this.heroButtons.innerHTML
+        };
         
         // Configuración del efecto
-        this.typingSpeed = 30; // Más rápido
-        this.codeDelay = 200; // Menos delay inicial
-        this.transitionDelay = 300; // Menos delay de transición
+        this.typingSpeed = 8; // Velocidad ajustada para más contenido
+        this.codeDelay = 200;
+        this.transitionDelay = 300;
         
         // Ocultar elementos inicialmente
         this.hideElements();
@@ -91,50 +96,64 @@ class CodeTypingEffect {
 
     async startEffect() {
         await this.delay(this.codeDelay);
-        await this.typeCode();
+        await this.typeAllContent();
         await this.delay(this.transitionDelay);
         await this.fadeOutCode();
-        await this.fadeInTitle();
+        await this.fadeInRealContent();
         await this.showRemainingElements();
-        await this.showRestOfPage(); // Mostrar el resto de la página al final
-        this.showScroll(); // Mostrar scroll al final
+        await this.showRestOfPage();
+        this.showScroll();
     }
 
-    async typeCode() {
+    async typeAllContent() {
         // Obtener el idioma actual y las traducciones correspondientes
         const currentLang = localStorage.getItem('portfolioLanguage') || 'es';
         const translations = TRANSLATIONS[currentLang];
         
-        // Crear el código HTML con las traducciones
+        // Crear el código HTML completo con las traducciones
         const greeting = translations.hero.greeting;
         const name = translations.hero.name;
-        const codeToType = `&lt;h1&gt;${greeting} &lt;span class="highlight"&gt;${name}&lt;/span&gt;&lt;/h1&gt;`;
+        const subtitle = translations.hero.subtitle;
+        const viewProjects = translations.hero.viewProjects;
+        const contact = translations.hero.contact;
+        
+        const codeToType = `&lt;div class="hero-content"&gt;
+    &lt;h1&gt;${greeting} &lt;span class="highlight"&gt;${name}&lt;/span&gt;&lt;/h1&gt;
+    &lt;p&gt;${subtitle}&lt;/p&gt;
+    &lt;div class="hero-buttons"&gt;
+        &lt;a href="#proyectos" class="btn btn-primary"&gt;${viewProjects}&lt;/a&gt;
+        &lt;a href="#contacto" class="btn btn-secondary"&gt;${contact}&lt;/a&gt;
+    &lt;/div&gt;
+&lt;/div&gt;`;
         
         let currentCode = '';
-        let coloredCode = ''; // Mover declaración fuera del bucle
+        let coloredCode = '';
         
-        this.heroTitle.style.opacity = '1';
-        this.heroTitle.style.fontFamily = 'Inter, sans-serif';
+        // Crear un contenedor temporal para el código
+        const codeContainer = document.createElement('div');
+        codeContainer.style.cssText = `
+            font-family: 'Inter', monospace;
+            font-size: 1.5rem;
+            line-height: 1.6;
+            color: #1f2937;
+            background:rgba(255, 255, 255, 0);
+            padding: 0;
+            white-space: pre-wrap;
+            font-weight: 400;
+            max-width: 100%;
+            overflow-x: auto;
+        `;
         
-        // Tamaño responsivo basado en el ancho de la pantalla
-        const screenWidth = window.innerWidth;
-        let fontSize;
-        if (screenWidth <= 480) {
-            fontSize = '1.8rem'; // Mobile
-        } else if (screenWidth <= 768) {
-            fontSize = '2.5rem'; // Tablet
-        } else {
-            fontSize = '3rem'; // Desktop
-        }
+        // Ocultar elementos originales
+        this.heroTitle.style.display = 'none';
+        this.heroSubtitle.style.display = 'none';
+        this.heroButtons.style.display = 'none';
+        this.heroImage.style.display = 'none';
         
-        this.heroTitle.style.fontSize = fontSize;
-        this.heroTitle.style.background = 'none';
-        this.heroTitle.style.padding = '0';
-        this.heroTitle.style.border = 'none';
-        this.heroTitle.style.boxShadow = 'none';
-        this.heroTitle.style.textAlign = 'left';
-        this.heroTitle.style.lineHeight = '1.4';
-        this.heroTitle.style.transform = 'none'; // Asegurar que no hay transformaciones
+        // Limpiar el contenedor y agregar el contenedor de código
+        this.heroContainer.innerHTML = '';
+        this.heroContainer.appendChild(codeContainer);
+        this.heroContainer.style.opacity = '1';
         
         for (let i = 0; i < codeToType.length; i++) {
             const char = codeToType[i];
@@ -145,6 +164,7 @@ class CodeTypingEffect {
                 .replace(/&lt;/g, '<span style="color: #ef4444;">&lt;</span>')
                 .replace(/&gt;/g, '<span style="color: #ef4444;">&gt;</span>')
                 .replace(/class=/g, '<span style="color: #3b82f6;">class=</span>')
+                .replace(/href=/g, '<span style="color: #3b82f6;">href=</span>')
                 .replace(/"highlight"/g, '<span style="color: #10b981;">"highlight"</span>')
                 .replace(/"hero-subtitle"/g, '<span style="color: #10b981;">"hero-subtitle"</span>')
                 .replace(/"hero-buttons"/g, '<span style="color: #10b981;">"hero-buttons"</span>')
@@ -152,40 +172,60 @@ class CodeTypingEffect {
                 .replace(/"btn btn-secondary"/g, '<span style="color: #10b981;">"btn btn-secondary"</span>')
                 .replace(/"#proyectos"/g, '<span style="color: #10b981;">"#proyectos"</span>')
                 .replace(/"#contacto"/g, '<span style="color: #10b981;">"#contacto"</span>')
-                .replace(/href=/g, '<span style="color: #3b82f6;">href=</span>');
+                .replace(/"hero-content"/g, '<span style="color: #10b981;">"hero-content"</span>');
             
-            this.heroTitle.innerHTML = coloredCode + '<span class="typing-cursor">|</span>';
+            codeContainer.innerHTML = coloredCode + '<span class="typing-cursor">|</span>';
             await this.delay(this.typingSpeed);
         }
         
-        this.heroTitle.innerHTML = coloredCode; // Quitar cursor al final
+        codeContainer.innerHTML = coloredCode; // Quitar cursor al final
     }
 
-
     async fadeOutCode() {
-        this.heroTitle.style.transition = 'opacity 0.4s ease-in-out';
-        this.heroTitle.style.opacity = '0';
+        this.heroContainer.style.transition = 'opacity 0.4s ease-in-out';
+        this.heroContainer.style.opacity = '0';
         await this.delay(400);
     }
 
-    async fadeInTitle() {
-        // Resetear todos los estilos y aplicar solo el fade
-        this.heroTitle.style.transition = 'opacity 0.6s ease-in-out';
-        this.heroTitle.style.fontFamily = '';
-        this.heroTitle.style.fontSize = '';
-        this.heroTitle.style.textAlign = '';
-        this.heroTitle.style.lineHeight = '';
-        this.heroTitle.style.transform = 'none'; // Asegurar que no hay transformaciones
+    async fadeInRealContent() {
+        // Resetear todos los estilos del contenedor
+        this.heroContainer.style.transition = 'opacity 0.6s ease-in-out';
+        this.heroContainer.style.fontFamily = '';
+        this.heroContainer.style.fontSize = '';
+        this.heroContainer.style.textAlign = '';
+        this.heroContainer.style.lineHeight = '';
+        this.heroContainer.style.transform = 'none';
+        this.heroContainer.style.whiteSpace = '';
+        this.heroContainer.style.fontWeight = '';
         
         // Obtener el idioma actual y las traducciones correspondientes
         const currentLang = localStorage.getItem('portfolioLanguage') || 'es';
         const translations = TRANSLATIONS[currentLang];
         
-        // Crear el título final con las traducciones
-        const finalTitle = `${translations.hero.greeting} <span class="highlight">${translations.hero.name}</span>`;
-        this.heroTitle.innerHTML = finalTitle;
+        // Restaurar la estructura original del hero-container
+        this.heroContainer.innerHTML = `
+            <div class="hero-content">
+                <h1 class="hero-title">${translations.hero.greeting} <span class="highlight">${translations.hero.name}</span></h1>
+                <p class="hero-subtitle">${translations.hero.subtitle}</p>
+                <div class="hero-buttons">
+                    <a href="#proyectos" class="btn btn-primary">${translations.hero.viewProjects}</a>
+                    <a href="#contacto" class="btn btn-secondary">${translations.hero.contact}</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="profile-image">
+                    <img src="assets/images/foto.png" alt="Samuel Delgado" class="profile-photo">
+                </div>
+            </div>
+        `;
         
-        this.heroTitle.style.opacity = '1';
+        // Reasignar referencias a los elementos
+        this.heroTitle = this.heroContainer.querySelector('.hero-title');
+        this.heroSubtitle = this.heroContainer.querySelector('.hero-subtitle');
+        this.heroButtons = this.heroContainer.querySelector('.hero-buttons');
+        this.heroImage = this.heroContainer.querySelector('.hero-image');
+        
+        this.heroContainer.style.opacity = '1';
         await this.delay(300);
     }
 
@@ -207,8 +247,6 @@ class CodeTypingEffect {
         this.heroImage.style.opacity = '1';
         this.heroImage.style.transform = 'translateX(0)';
         await this.delay(400);
-        
-        this.heroTitle.classList.remove('code-mode');
     }
 
     delay(ms) {
