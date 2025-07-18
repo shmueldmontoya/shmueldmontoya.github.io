@@ -26,6 +26,15 @@ window.projects = [
         technologies: ["JavaScript", "HTML", "CSS"],
         liveLink: "https://shmueldmontoya.github.io/sarcastiCalc",
         codeLink: "https://github.com/shmueldmontoya/sarcastiCalc"
+    },
+    {
+        id: 4,
+        title: "Geek Toolkit",
+        description: "Una colección de herramientas útiles para desarrolladores y entusiastas de la tecnología, construida con React y diseñada con una interfaz moderna y responsive.",
+        image: "assets/images/geektoolkitimage.png",
+        technologies: ["JavaScript", "HTML", "CSS", "React"],
+        liveLink: "https://geektoolkit.netlify.app",
+        codeLink: "https://github.com/shmueldmontoya/geek-toolkit"
     }
 ];
 

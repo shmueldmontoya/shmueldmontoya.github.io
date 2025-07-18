@@ -11,15 +11,8 @@ class CodeTypingEffect {
         this.heroImage = document.querySelector('.hero-image');
         this.navContainer = document.querySelector('.nav-container');
         
-        // Guardar contenido original
-        this.originalContent = {
-            title: this.heroTitle.innerHTML,
-            subtitle: this.heroSubtitle.innerHTML,
-            buttons: this.heroButtons.innerHTML
-        };
-        
         // Configuración del efecto
-        this.typingSpeed = 8; // Velocidad ajustada para más contenido
+        this.typingSpeed = 20; // Velocidad ajustada para más contenido
         this.codeDelay = 200;
         this.transitionDelay = 300;
         
@@ -36,10 +29,11 @@ class CodeTypingEffect {
         this.heroImage.style.opacity = '0';
         this.heroImage.style.transform = 'translateX(50px)';
         
-        // Ocultar la navegación
+        // Ocultar la navegación completamente
         if (this.navContainer) {
             this.navContainer.style.opacity = '0';
             this.navContainer.style.visibility = 'hidden';
+            this.navContainer.style.display = 'none';
         }
     }
 
@@ -86,11 +80,17 @@ class CodeTypingEffect {
             footer.style.visibility = 'visible';
         }
         
-        // Mostrar la navegación
+        // Mostrar la navegación completamente con fade in
         if (this.navContainer) {
-            this.navContainer.style.transition = 'opacity 0.8s ease-in-out, visibility 0.8s ease-in-out';
-            this.navContainer.style.opacity = '1';
+            this.navContainer.style.display = '';
+            this.navContainer.style.opacity = '0';
             this.navContainer.style.visibility = 'visible';
+            this.navContainer.style.transition = 'opacity 0.8s ease-in-out, visibility 0.8s ease-in-out';
+            // Forzar reflow para que la transición funcione
+            void this.navContainer.offsetWidth;
+            setTimeout(() => {
+                this.navContainer.style.opacity = '1';
+            }, 10);
         }
     }
 
@@ -110,21 +110,12 @@ class CodeTypingEffect {
         const currentLang = localStorage.getItem('portfolioLanguage') || 'es';
         const translations = TRANSLATIONS[currentLang];
         
-        // Crear el código HTML completo con las traducciones
+        // Solo el h1 con saludo y nombre
         const greeting = translations.hero.greeting;
         const name = translations.hero.name;
-        const subtitle = translations.hero.subtitle;
-        const viewProjects = translations.hero.viewProjects;
-        const contact = translations.hero.contact;
         
-        const codeToType = `&lt;div class="hero-content"&gt;
-    &lt;h1&gt;${greeting} &lt;span class="highlight"&gt;${name}&lt;/span&gt;&lt;/h1&gt;
-    &lt;p&gt;${subtitle}&lt;/p&gt;
-    &lt;div class="hero-buttons"&gt;
-        &lt;a href="#proyectos" class="btn btn-primary"&gt;${viewProjects}&lt;/a&gt;
-        &lt;a href="#contacto" class="btn btn-secondary"&gt;${contact}&lt;/a&gt;
-    &lt;/div&gt;
-&lt;/div&gt;`;
+        // Usar los caracteres reales < y >
+        const codeToType = `<h1 class=\"hero-title\"> ${greeting} <span class=\"highlight\">${name}</span> </h1>`;
         
         let currentCode = '';
         let coloredCode = '';
@@ -133,15 +124,16 @@ class CodeTypingEffect {
         const codeContainer = document.createElement('div');
         codeContainer.style.cssText = `
             font-family: 'Inter', monospace;
-            font-size: 1.5rem;
-            line-height: 1.6;
+            font-size: 2rem;
+            line-height: 1.2;
             color: #1f2937;
             background:rgba(255, 255, 255, 0);
             padding: 0;
             white-space: pre-wrap;
             font-weight: 400;
             max-width: 100%;
-            overflow-x: auto;
+            overflow: hidden;
+            text-align: left;
         `;
         
         // Ocultar elementos originales
@@ -159,20 +151,27 @@ class CodeTypingEffect {
             const char = codeToType[i];
             currentCode += char;
             
-            // Aplicar colores al código
-            coloredCode = currentCode
+            // Escapar primero todo el string
+            let escapedCode = currentCode
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            // Luego aplicar coloreado de sintaxis sobre el string escapado
+            coloredCode = escapedCode
+                // Colorear < y > en rojo
                 .replace(/&lt;/g, '<span style="color: #ef4444;">&lt;</span>')
                 .replace(/&gt;/g, '<span style="color: #ef4444;">&gt;</span>')
+                // Colorear nombres de etiqueta (h1, span) en #a21caf, incluso si hay atributos
+                .replace(/(<span style=\\?"color: #ef4444;">&lt;<\\?\/span>\/?)([a-zA-Z0-9]+)/g, function(match, p1, p2) {
+                    if (['h1','span'].includes(p2)) {
+                        return p1 + '<span style="color: #a21caf;">' + p2 + '</span>';
+                    }
+                    return match;
+                })
+                // Colorear class= en azul
                 .replace(/class=/g, '<span style="color: #3b82f6;">class=</span>')
-                .replace(/href=/g, '<span style="color: #3b82f6;">href=</span>')
-                .replace(/"highlight"/g, '<span style="color: #10b981;">"highlight"</span>')
-                .replace(/"hero-subtitle"/g, '<span style="color: #10b981;">"hero-subtitle"</span>')
-                .replace(/"hero-buttons"/g, '<span style="color: #10b981;">"hero-buttons"</span>')
-                .replace(/"btn btn-primary"/g, '<span style="color: #10b981;">"btn btn-primary"</span>')
-                .replace(/"btn btn-secondary"/g, '<span style="color: #10b981;">"btn btn-secondary"</span>')
-                .replace(/"#proyectos"/g, '<span style="color: #10b981;">"#proyectos"</span>')
-                .replace(/"#contacto"/g, '<span style="color: #10b981;">"#contacto"</span>')
-                .replace(/"hero-content"/g, '<span style="color: #10b981;">"hero-content"</span>');
+                // Colorear valores de clase
+                .replace(/"hero-title"/g, '<span style="color: #10b981;">"hero-title"</span>')
+                .replace(/"highlight"/g, '<span style="color: #10b981;">"highlight"</span>');
             
             codeContainer.innerHTML = coloredCode + '<span class="typing-cursor">|</span>';
             await this.delay(this.typingSpeed);
@@ -223,30 +222,23 @@ class CodeTypingEffect {
         this.heroTitle = this.heroContainer.querySelector('.hero-title');
         this.heroSubtitle = this.heroContainer.querySelector('.hero-subtitle');
         this.heroButtons = this.heroContainer.querySelector('.hero-buttons');
-        this.heroImage = this.heroContainer.querySelector('.hero-image');
-        
+        this.heroImage = this.heroContainer.querySelector('.hero-image');        
         this.heroContainer.style.opacity = '1';
         await this.delay(300);
     }
 
     async showRemainingElements() {
-        // Mostrar subtítulo
-        this.heroSubtitle.style.transition = 'opacity 0.6s ease-in-out, transform 0.6s ease-in-out';
+        // Mostrar todos los elementos de golpe
+        this.heroSubtitle.style.transition = 'opacity 0.1s ease-in-out, transform 0.1s ease-in-out';
         this.heroSubtitle.style.opacity = '1';
         this.heroSubtitle.style.transform = 'translateY(0)';
-        await this.delay(200);
-        
-        // Mostrar botones
-        this.heroButtons.style.transition = 'opacity 0.6s ease-in-out, transform 0.6s ease-in-out';
+        this.heroButtons.style.transition = 'opacity 0.1s ease-in-out, transform 0.1s ease-in-out';
         this.heroButtons.style.opacity = '1';
         this.heroButtons.style.transform = 'translateY(0)';
-        await this.delay(200);
-        
-        // Mostrar imagen
-        this.heroImage.style.transition = 'opacity 0.6s ease-in-out, transform 0.6s ease-in-out';
+        this.heroImage.style.transition = 'opacity 0.1s ease-in-out, transform 0.1s ease-in-out';
         this.heroImage.style.opacity = '1';
         this.heroImage.style.transform = 'translateX(0)';
-        await this.delay(400);
+        await this.delay(100);
     }
 
     delay(ms) {
