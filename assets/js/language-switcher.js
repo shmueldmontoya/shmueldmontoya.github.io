@@ -253,6 +253,11 @@ class LanguageSwitcher {
                 id: 3,
                 title: projectsTranslations.sarcastiCalc.title,
                 description: projectsTranslations.sarcastiCalc.description
+            },
+            {
+                id: 4,
+                title: projectsTranslations.geekToolkit.title,
+                description: projectsTranslations.geekToolkit.description
             }
         ];
 

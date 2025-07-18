@@ -45,6 +45,10 @@ const TRANSLATIONS = {
                 title: "SarcastiCalc",
                 description: "Una calculadora web única que combina funcionalidad matemática con humor, easter eggs, sistema de vidas, efectos visuales y múltiples modos de juego. ¡La calculadora más divertida y completa del mundo!"
             },
+            geekToolkit: {
+                title: "Geek Toolkit",
+                description: "Una colección de herramientas útiles para desarrolladores y entusiastas de la tecnología, construida con React y diseñada con una interfaz moderna y responsive."
+            },
             technologies: "Tecnologías utilizadas:",
             viewProject: "Ver Proyecto",
             viewCode: "Ver Código"
@@ -117,6 +121,10 @@ const TRANSLATIONS = {
             sarcastiCalc: {
                 title: "SarcastiCalc",
                 description: "A unique web calculator that combines mathematical functionality with humor, easter eggs, life system, visual effects and multiple game modes. The most fun and complete calculator in the world!"
+            },
+            geekToolkit: {
+                title: "Geek Toolkit",
+                description: "A collection of useful tools for developers and technology enthusiasts, built with React and designed with a modern and responsive interface."
             },
             technologies: "Technologies used:",
             viewProject: "View Project",

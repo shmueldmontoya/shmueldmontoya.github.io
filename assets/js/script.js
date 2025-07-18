@@ -120,13 +120,22 @@ function openProjectModal(project) {
     modalCodeLink.href = project.codeLink;
     
     modal.style.display = 'block';
+    // Animación fade in
+    modal.classList.remove('fade-out');
+    void modal.offsetWidth; // Forzar reflow para reiniciar la animación
+    modal.classList.add('fade-in');
     document.body.style.overflow = 'hidden';
 }
 
 // Cerrar modal
 function closeProjectModal() {
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto';
+    // Animación fade out
+    modal.classList.remove('fade-in');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }, 300); // Duración de la animación (debe coincidir con el CSS)
 }
 
 // Eventos del modal
@@ -314,6 +323,20 @@ notificationStyles.textContent = `
     
     .nav-link.active::after {
         width: 100%;
+    }
+    /* Animaciones fade para el modal */
+    #projectModal {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+    #projectModal.fade-in {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    #projectModal.fade-out {
+        opacity: 0;
+        pointer-events: none;
     }
 `;
 document.head.appendChild(notificationStyles); 
