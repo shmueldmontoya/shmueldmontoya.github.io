@@ -14,7 +14,7 @@ window.projects = [
         title: "Creador de Rotulaciones",
         description: "Una aplicación para crear rotulaciones para tiendas o supermercados con diseños básicos, de forma rápida y eficiente, para impresión tamaño carta.",
         image: "assets/images/creadordepreciosimage.png",
-        technologies: ["JavaScript", "HTML", "CSS"],
+        technologies: ["JavaScript", "HTML", "CSS", "React"],
         liveLink: "https://shmueldmontoya.github.io/creadordeprecios",
         codeLink: "https://github.com/shmueldmontoya/creadordeprecios"
     },
