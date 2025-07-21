@@ -16,7 +16,7 @@ window.projects = [
         image: "assets/images/creadordepreciosimage.png",
         technologies: ["JavaScript", "HTML", "CSS", "React"],
         liveLink: "https://shmueldmontoya.github.io/creadordeprecios",
-        codeLink: "https://github.com/shmueldmontoya/creadordeprecios"
+        codeLink: "https://creadordeprecios.netlify.app/"
     },
     {
         id: 3,
